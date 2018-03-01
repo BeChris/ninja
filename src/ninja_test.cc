@@ -126,7 +126,7 @@ bool testing::Test::Check(bool condition, const char* file, int line,
   return condition;
 }
 
-int main(int argc, char **argv) {
+int test_main(int argc, char **argv) {
   int tests_started = 0;
 
   const char* test_filter = "*";
