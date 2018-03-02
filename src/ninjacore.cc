@@ -16,7 +16,7 @@ ninjacore_build(PyObject *self, PyObject *args, PyObject *keywds)
     (void)self;
 
     // Accepted keywords
-    static const char *kwlist[] = {"dir", "file", "jobs", "verbose", "target", "stats", "explain", "keepdepfile", "keeprsp", NULL};
+    static const char *kwlist[] = {"dir", "file", "jobs", "verbose", "target", "stats", "explain", "keepdepfile", "keeprsp", "nostatcache", NULL};
 
     char *dir = NULL;
     char *file = NULL;
@@ -27,12 +27,13 @@ ninjacore_build(PyObject *self, PyObject *args, PyObject *keywds)
     int explain = 0;
     int keepdepfile = 0;
     int keeprsp = 0;
+    int nostatcache = 0;
 
-    if (!PyArg_ParseTupleAndKeywords(args, keywds, "|$ssIpsbbbb", (char **)kwlist,
-                                         &dir, &file, &jobs, &verbose, &target, &stats, &explain, &keepdepfile, &keeprsp))
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "|$ssIpsbbbbb", (char **)kwlist,
+                                         &dir, &file, &jobs, &verbose, &target, &stats, &explain, &keepdepfile, &keeprsp, &nostatcache))
                  return NULL;
 
-#define MAX_RUN_ARGV 18
+#define MAX_RUN_ARGV 20
     int argc = 1;
     char **argv = new char *[MAX_RUN_ARGV];
     int idx = 0;
@@ -90,6 +91,12 @@ ninjacore_build(PyObject *self, PyObject *args, PyObject *keywds)
         argv[idx++] = strdup("keeprsp");
         argc++;
     }
+    if (nostatcache) {
+        argv[idx++] = strdup("-d");
+        argc++;
+        argv[idx++] = strdup("nostatcache");
+        argc++;
+    }
 
     argv[argc] = NULL;
 
@@ -97,7 +104,7 @@ ninjacore_build(PyObject *self, PyObject *args, PyObject *keywds)
 }
 
 static PyObject *
-ninjacore_selftest(PyObject *self, PyObject *args)
+ninjacore_selftests(PyObject *self, PyObject *args)
 {
     (void)self;
 
@@ -124,12 +131,13 @@ static PyMethodDef NinjaCoreMethods[] = {
      " stats (boolean)       : print operation counts/timing info [default=False]\n"
      " explain (boolean)     : explain what caused a command to execute [default=False]\n"
      " keepdepfile (boolean) : don't delete depfiles after they're read by ninja [default=False]\n"
-     " keeprsp (boolean)     : don't delete @response files on success [default=False]\n\n"
+     " keeprsp (boolean)     : don't delete @response files on success [default=False]\n"
+     " nostatcache (boolean) : don't batch stat() calls per directory and cache them [default=False]\n\n"
      "This method calls exit() terminating the Python interpreter and returning a status code:\n"
      " 0   : if everything went OK.\n"
      " > 0 : if something went wrong."
     },
-    {"selftest",  (PyCFunction)ninjacore_selftest, METH_NOARGS,
+    {"selftests",  (PyCFunction)ninjacore_selftests, METH_NOARGS,
      "Trigger ninjacore self tests.\n\n"
      "This method calls exit() terminating the Python interpreter and returning a status code:\n"
      " 0   : if everything went OK.\n"
@@ -152,8 +160,10 @@ static struct PyModuleDef ninjacore = {
 };
 
 PyMODINIT_FUNC PyInit_ninjacore(void) {
+    /* Create main "ninjacore" module */
     PyObject *module = PyModule_Create(&ninjacore);
     if (module) {
+        /* Add constant "version" string in main "ninjacore" module */
         PyModule_AddStringConstant(module, "version", kNinjaVersion);
     }
     return module;
