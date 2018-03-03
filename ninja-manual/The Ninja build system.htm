@@ -1,59 +1,787 @@
-<!DOCTYPE html>
-<!-- saved from url=(0035)https://ninja-build.org/manual.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>The Ninja build system</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><style>body {
-    margin: 5ex 10ex;
-    max-width: 80ex;
-    line-height: 1.5;
-    font-family: sans-serif;
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.9" />
+<title>The Ninja build system</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
 }
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
 h1, h2, h3 {
-    font-weight: normal;
+  border-bottom: 2px solid silver;
 }
-pre, code {
-    font-family: x, monospace;
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
 }
 pre {
-    padding: 1ex;
-    background: #eee;
-    border: solid 1px #ddd;
-    min-width: 0;
-    font-size: 90%;
+  white-space: pre-wrap;
 }
-code {
-    color: #007;
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
 }
-div.chapter {
-    margin-top: 4em;
-    border-top: solid 2px black;
+#email {
 }
-p {
-    margin-top: 0;
+#revnumber, #revdate, #revremark {
 }
-</style><style></style></head><body><div lang="en" class="book"><div class="titlepage"><div><div><h1 class="title"><a name="idm45653503587856"></a>The Ninja build system</h1></div><div><div class="author"><h3 class="author"><span class="firstname">v1.8.2,</span> <span class="othername">Sep</span> <span class="surname">2017</span></h3></div></div></div><hr></div><div class="toc"><ul class="toc"><li><span class="chapter"><a href="https://ninja-build.org/manual.html#_introduction">Introduction</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#_philosophical_overview">Philosophical overview</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_design_goals">Design goals</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_comparison_to_make">Comparison to Make</a></span></li></ul></li><li><span class="chapter"><a href="https://ninja-build.org/manual.html#_using_ninja_for_your_project">Using Ninja for your project</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#_running_ninja">Running Ninja</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_environment_variables">Environment variables</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_extra_tools">Extra tools</a></span></li></ul></li><li><span class="chapter"><a href="https://ninja-build.org/manual.html#_writing_your_own_ninja_files">Writing your own Ninja files</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#_conceptual_overview">Conceptual overview</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_syntax_example">Syntax example</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_variables">Variables</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_rules">Rules</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_build_statements">Build statements</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_generating_ninja_files_from_code">Generating Ninja files from code</a></span></li></ul></li><li><span class="chapter"><a href="https://ninja-build.org/manual.html#_more_details">More details</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#_the_literal_phony_literal_rule">The <code class="literal">phony</code> rule</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_default_target_statements">Default target statements</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_log">The Ninja log</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_versioning">Version compatibility</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_headers">C/C++ header dependencies</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#_depfile">depfile</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_deps">deps</a></span></li></ul></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_pool">Pools</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#_the_literal_console_literal_pool">The <code class="literal">console</code> pool</a></span></li></ul></li></ul></li><li><span class="chapter"><a href="https://ninja-build.org/manual.html#_ninja_file_reference">Ninja file reference</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#_lexical_syntax">Lexical syntax</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_toplevel">Top-level variables</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_rule">Rule variables</a></span><ul><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_rule_command">Interpretation of the <code class="literal">command</code> variable</a></span></li></ul></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_outputs">Build outputs</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_dependencies">Build dependencies</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#_variable_expansion">Variable expansion</a></span></li><li><span class="section"><a href="https://ninja-build.org/manual.html#ref_scope">Evaluation and scoping</a></span></li></ul></li></ul></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_introduction"></a>Introduction</h1></div></div></div><p>Ninja is yet another build system.  It takes as input the
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>The Ninja build system</h1>
+<span id="author">v1.8.2, Sep 2017</span><br />
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Ninja is yet another build system.  It takes as input the
 interdependencies of files (typically source code and output
-executables) and orchestrates building them, <span class="emphasis"><em>quickly</em></span>.</p><p>Ninja joins a sea of other build systems.  Its distinguishing goal is
+executables) and orchestrates building them, <em>quickly</em>.</p></div>
+<div class="paragraph"><p>Ninja joins a sea of other build systems.  Its distinguishing goal is
 to be fast.  It is born from
-<a class="ulink" href="http://neugierig.org/software/chromium/notes/2011/02/ninja.html" target="_top">my
+<a href="http://neugierig.org/software/chromium/notes/2011/02/ninja.html">my
 work on the Chromium browser project</a>, which has over 30,000 source
 files and whose other build systems (including one built from custom
 non-recursive Makefiles) would take ten seconds to start building
-after changing one file.  Ninja is under a second.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_philosophical_overview"></a>Philosophical overview</h2></div></div></div><p>Where other build systems are high-level languages, Ninja aims to be
-an assembler.</p><p>Build systems get slow when they need to make decisions.  When you are
-in a edit-compile cycle you want it to be as fast as possible — you
+after changing one file.  Ninja is under a second.</p></div>
+<div class="sect2">
+<h3 id="_philosophical_overview">Philosophical overview</h3>
+<div class="paragraph"><p>Where other build systems are high-level languages, Ninja aims to be
+an assembler.</p></div>
+<div class="paragraph"><p>Build systems get slow when they need to make decisions.  When you are
+in a edit-compile cycle you want it to be as fast as possible&#8201;&#8212;&#8201;you
 want the build system to do the minimum work necessary to figure out
-what needs to be built immediately.</p><p>Ninja contains the barest functionality necessary to describe
+what needs to be built immediately.</p></div>
+<div class="paragraph"><p>Ninja contains the barest functionality necessary to describe
 arbitrary dependency graphs.  Its lack of syntax makes it impossible
-to express complex decisions.</p><p>Instead, Ninja is intended to be used with a separate program
+to express complex decisions.</p></div>
+<div class="paragraph"><p>Instead, Ninja is intended to be used with a separate program
 generating its input files.  The generator program (like the
-<code class="literal">./configure</code> found in autotools projects) can analyze system
+<code>./configure</code> found in autotools projects) can analyze system
 dependencies and make as many decisions as possible up front so that
 incremental builds stay fast.  Going beyond autotools, even build-time
 decisions like "which compiler flags should I use?"  or "should I
-build a debug or release-mode binary?"  belong in the <code class="literal">.ninja</code> file
-generator.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_design_goals"></a>Design goals</h2></div></div></div><p>Here are the design goals of Ninja:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+build a debug or release-mode binary?"  belong in the <code>.ninja</code> file
+generator.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_design_goals">Design goals</h3>
+<div class="paragraph"><p>Here are the design goals of Ninja:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
 very fast (i.e., instant) incremental builds, even for very large
   projects.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 very little policy about how code is built.  Different projects and
   higher-level build systems have different opinions about how code
   should be built; for example, should built objects live alongside
@@ -62,298 +790,518 @@ very little policy about how code is built.  Different projects and
   the project?  Sidestep these decisions by trying to allow either to
   be implemented, rather than choosing, even if that results in
   more verbosity.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 get dependencies correct, and in particular situations that are
   difficult to get right with Makefiles (e.g. outputs need an implicit
   dependency on the command line used to generate them; to build C
-  source code you need to use gcc’s <code class="literal">-M</code> flags for header
+  source code you need to use gcc&#8217;s <code>-M</code> flags for header
   dependencies).
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 when convenience and speed are in conflict, prefer speed.
-</li></ul></div><p>Some explicit <span class="emphasis"><em>non-goals</em></span>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-convenient syntax for writing build files by hand.  <span class="emphasis"><em>You should
-  generate your ninja files using another program</em></span>.  This is how we
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Some explicit <em>non-goals</em>:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+convenient syntax for writing build files by hand.  <em>You should
+  generate your ninja files using another program</em>.  This is how we
   can sidestep many policy decisions.
-</li><li class="listitem">
-built-in rules. <span class="emphasis"><em>Out of the box, Ninja has no rules for
-  e.g. compiling C code.</em></span>
-</li><li class="listitem">
-build-time customization of the build. <span class="emphasis"><em>Options belong in
-  the program that generates the ninja files</em></span>.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
+built-in rules. <em>Out of the box, Ninja has no rules for
+  e.g. compiling C code.</em>
+</p>
+</li>
+<li>
+<p>
+build-time customization of the build. <em>Options belong in
+  the program that generates the ninja files</em>.
+</p>
+</li>
+<li>
+<p>
 build-time decision-making ability such as conditionals or search
-  paths. <span class="emphasis"><em>Making decisions is slow.</em></span>
-</li></ul></div><p>To restate, Ninja is faster than other build systems because it is
+  paths. <em>Making decisions is slow.</em>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>To restate, Ninja is faster than other build systems because it is
 painfully simple.  You must tell Ninja exactly what to do when you
-create your project’s <code class="literal">.ninja</code> files.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_comparison_to_make"></a>Comparison to Make</h2></div></div></div><p>Ninja is closest in spirit and functionality to Make, relying on
-simple dependencies between file timestamps.</p><p>But fundamentally, make has a lot of <span class="emphasis"><em>features</em></span>: suffix rules,
+create your project&#8217;s <code>.ninja</code> files.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_comparison_to_make">Comparison to Make</h3>
+<div class="paragraph"><p>Ninja is closest in spirit and functionality to Make, relying on
+simple dependencies between file timestamps.</p></div>
+<div class="paragraph"><p>But fundamentally, make has a lot of <em>features</em>: suffix rules,
 functions, built-in rules that e.g. search for RCS files when building
-source.  Make’s language was designed to be written by humans.  Many
-projects find make alone adequate for their build problems.</p><p>In contrast, Ninja has almost no features; just those necessary to get
+source.  Make&#8217;s language was designed to be written by humans.  Many
+projects find make alone adequate for their build problems.</p></div>
+<div class="paragraph"><p>In contrast, Ninja has almost no features; just those necessary to get
 builds correct while punting most complexity to generation of the
 ninja input files.  Ninja by itself is unlikely to be useful for most
-projects.</p><p>Here are some of the features Ninja adds to Make.  (These sorts of
+projects.</p></div>
+<div class="paragraph"><p>Here are some of the features Ninja adds to Make.  (These sorts of
 features can often be implemented using more complicated Makefiles,
-but they are not part of make itself.)</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+but they are not part of make itself.)</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
 Ninja has special support for discovering extra dependencies at build
-  time, making it easy to get <a class="link" href="https://ninja-build.org/manual.html#ref_headers" title="C/C++ header dependencies">header dependencies</a>
+  time, making it easy to get <a href="#ref_headers">header dependencies</a>
   correct for C/C++ code.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 A build edge may have multiple outputs.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 Outputs implicitly depend on the command line that was used to generate
   them, which means that changing e.g. compilation flags will cause
   the outputs to rebuild.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 Output directories are always implicitly created before running the
   command that relies on them.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 Rules can provide shorter descriptions of the command being run, so
-  you can print e.g. <code class="literal">CC foo.o</code> instead of a long command line while
+  you can print e.g. <code>CC foo.o</code> instead of a long command line while
   building.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 Builds are always run in parallel, based by default on the number of
   CPUs your system has.  Underspecified build dependencies will result
   in incorrect builds.
-</li><li class="listitem">
+</p>
+</li>
+<li>
+<p>
 Command output is always buffered.  This means commands running in
-  parallel don’t interleave their output, and when a command fails we
+  parallel don&#8217;t interleave their output, and when a command fails we
   can print its failure output next to the full command line that
   produced the failure.
-</li></ul></div></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_using_ninja_for_your_project"></a>Using Ninja for your project</h1></div></div></div><p>Ninja currently works on Unix-like systems and Windows. It’s seen the
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_ninja_for_your_project">Using Ninja for your project</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Ninja currently works on Unix-like systems and Windows. It&#8217;s seen the
 most testing on Linux (and has the best performance there) but it runs
-fine on Mac OS X and FreeBSD.</p><p>If your project is small, Ninja’s speed impact is likely unnoticeable.
-(However, even for small projects it sometimes turns out that Ninja’s
+fine on Mac OS X and FreeBSD.</p></div>
+<div class="paragraph"><p>If your project is small, Ninja&#8217;s speed impact is likely unnoticeable.
+(However, even for small projects it sometimes turns out that Ninja&#8217;s
 limited syntax forces simpler build rules that result in faster
-builds.)  Another way to say this is that if you’re happy with the
-edit-compile cycle time of your project already then Ninja won’t help.</p><p>There are many other build systems that are more user-friendly or
+builds.)  Another way to say this is that if you&#8217;re happy with the
+edit-compile cycle time of your project already then Ninja won&#8217;t help.</p></div>
+<div class="paragraph"><p>There are many other build systems that are more user-friendly or
 featureful than Ninja itself.  For some recommendations: the Ninja
-author found <a class="ulink" href="http://gittup.org/tup/" target="_top">the tup build system</a> influential
-in Ninja’s design, and thinks <a class="ulink" href="https://github.com/apenwarr/redo" target="_top">redo</a>'s
-design is quite clever.</p><p>Ninja’s benefit comes from using it in conjunction with a smarter
-meta-build system.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
-<a class="ulink" href="http://code.google.com/p/gyp/" target="_top">gyp</a>
-</span></dt><dd>
+author found <a href="http://gittup.org/tup/">the tup build system</a> influential
+in Ninja&#8217;s design, and thinks <a href="https://github.com/apenwarr/redo">redo</a>'s
+design is quite clever.</p></div>
+<div class="paragraph"><p>Ninja&#8217;s benefit comes from using it in conjunction with a smarter
+meta-build system.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<a href="http://code.google.com/p/gyp/">gyp</a>
+</dt>
+<dd>
+<p>
 The meta-build system used to
 generate build files for Google Chrome and related projects (v8,
 node.js).  gyp can generate Ninja files for all platforms supported by
 Chrome. See the
-<a class="ulink" href="https://chromium.googlesource.com/chromium/src/+/master/docs/ninja_build.md" target="_top">Chromium Ninja documentation for more details</a>.
-</dd><dt><span class="term">
-<a class="ulink" href="https://cmake.org/" target="_top">CMake</a>
-</span></dt><dd>
+<a href="https://chromium.googlesource.com/chromium/src/+/master/docs/ninja_build.md">Chromium Ninja documentation for more details</a>.
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="https://cmake.org/">CMake</a>
+</dt>
+<dd>
+<p>
 A widely used meta-build system that
 can generate Ninja files on Linux as of CMake version 2.8.8.  Newer versions
 of CMake support generating Ninja files on Windows and Mac OS X too.
-</dd><dt><span class="term">
-<a class="ulink" href="https://github.com/ninja-build/ninja/wiki/List-of-generators-producing-ninja-build-files" target="_top">others</a>
-</span></dt><dd>
+</p>
+</dd>
+<dt class="hdlist1">
+<a href="https://github.com/ninja-build/ninja/wiki/List-of-generators-producing-ninja-build-files">others</a>
+</dt>
+<dd>
+<p>
 Ninja ought to fit perfectly into other meta-build software
-like <a class="ulink" href="http://industriousone.com/premake" target="_top">premake</a>.  If you do this work,
+like <a href="http://industriousone.com/premake">premake</a>.  If you do this work,
 please let us know!
-</dd></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_running_ninja"></a>Running Ninja</h2></div></div></div><p>Run <code class="literal">ninja</code>.  By default, it looks for a file named <code class="literal">build.ninja</code> in
+</p>
+</dd>
+</dl></div>
+<div class="sect2">
+<h3 id="_running_ninja">Running Ninja</h3>
+<div class="paragraph"><p>Run <code>ninja</code>.  By default, it looks for a file named <code>build.ninja</code> in
 the current directory and builds all out-of-date targets.  You can
-specify which targets (files) to build as command line arguments.</p><p>There is also a special syntax <code class="literal">target^</code> for specifying a target
+specify which targets (files) to build as command line arguments.</p></div>
+<div class="paragraph"><p>There is also a special syntax <code>target^</code> for specifying a target
 as the first output of some rule containing the source you put in
 the command line, if one exists. For example, if you specify target as
-<code class="literal">foo.c^</code> then <code class="literal">foo.o</code> will get built (assuming you have those targets
-in your build files).</p><p><code class="literal">ninja -h</code> prints help output.  Many of Ninja’s flags intentionally
-match those of Make; e.g <code class="literal">ninja -C build -j 20</code> changes into the
-<code class="literal">build</code> directory and runs 20 build commands in parallel.  (Note that
+<code>foo.c^</code> then <code>foo.o</code> will get built (assuming you have those targets
+in your build files).</p></div>
+<div class="paragraph"><p><code>ninja -h</code> prints help output.  Many of Ninja&#8217;s flags intentionally
+match those of Make; e.g <code>ninja -C build -j 20</code> changes into the
+<code>build</code> directory and runs 20 build commands in parallel.  (Note that
 Ninja defaults to running commands in parallel anyway, so typically
-you don’t need to pass <code class="literal">-j</code>.)</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_environment_variables"></a>Environment variables</h2></div></div></div><p>Ninja supports one environment variable to control its behavior:
-<code class="literal">NINJA_STATUS</code>, the progress status printed before the rule being run.</p><p>Several placeholders are available:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
-<code class="literal">%s</code>
-</span></dt><dd>
+you don&#8217;t need to pass <code>-j</code>.)</p></div>
+</div>
+<div class="sect2">
+<h3 id="_environment_variables">Environment variables</h3>
+<div class="paragraph"><p>Ninja supports one environment variable to control its behavior:
+<code>NINJA_STATUS</code>, the progress status printed before the rule being run.</p></div>
+<div class="paragraph"><p>Several placeholders are available:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<code>%s</code>
+</dt>
+<dd>
+<p>
 The number of started edges.
-</dd><dt><span class="term">
-<code class="literal">%t</code>
-</span></dt><dd>
-The total number of edges that must be run to complete the build.
-</dd><dt><span class="term">
-<code class="literal">%p</code>
-</span></dt><dd>
-The percentage of started edges.
-</dd><dt><span class="term">
-<code class="literal">%r</code>
-</span></dt><dd>
-The number of currently running edges.
-</dd><dt><span class="term">
-<code class="literal">%u</code>
-</span></dt><dd>
-The number of remaining edges to start.
-</dd><dt><span class="term">
-<code class="literal">%f</code>
-</span></dt><dd>
-The number of finished edges.
-</dd><dt><span class="term">
-<code class="literal">%o</code>
-</span></dt><dd>
-Overall rate of finished edges per second
-</dd><dt><span class="term">
-<code class="literal">%c</code>
-</span></dt><dd>
-Current rate of finished edges per second (average over builds
-specified by <code class="literal">-j</code> or its default)
-</dd><dt><span class="term">
-<code class="literal">%e</code>
-</span></dt><dd>
-Elapsed time in seconds.  <span class="emphasis"><em>(Available since Ninja 1.2.)</em></span>
-</dd><dt><span class="term">
-<code class="literal">%%</code>
-</span></dt><dd>
-A plain <code class="literal">%</code> character.
-</dd></dl></div><p>The default progress status is <code class="literal">"[%f/%t] "</code> (note the trailing space
-to separate from the build rule). Another example of possible progress status
-could be <code class="literal">"[%u/%r/%f] "</code>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_extra_tools"></a>Extra tools</h2></div></div></div><p>The <code class="literal">-t</code> flag on the Ninja command line runs some tools that we have
-found useful during Ninja’s development.  The current tools are:</p><div class="horizontal"><table border="0"><colgroup><col><col></colgroup><tbody valign="top"><tr><td valign="top">
-<p>
-<code class="literal">query</code>
 </p>
-</td><td valign="top">
+</dd>
+<dt class="hdlist1">
+<code>%t</code>
+</dt>
+<dd>
 <p>
+The total number of edges that must be run to complete the build.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%p</code>
+</dt>
+<dd>
+<p>
+The percentage of started edges.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%r</code>
+</dt>
+<dd>
+<p>
+The number of currently running edges.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%u</code>
+</dt>
+<dd>
+<p>
+The number of remaining edges to start.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%f</code>
+</dt>
+<dd>
+<p>
+The number of finished edges.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%o</code>
+</dt>
+<dd>
+<p>
+Overall rate of finished edges per second
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%c</code>
+</dt>
+<dd>
+<p>
+Current rate of finished edges per second (average over builds
+specified by <code>-j</code> or its default)
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%e</code>
+</dt>
+<dd>
+<p>
+Elapsed time in seconds.  <em>(Available since Ninja 1.2.)</em>
+</p>
+</dd>
+<dt class="hdlist1">
+<code>%%</code>
+</dt>
+<dd>
+<p>
+A plain <code>%</code> character.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>The default progress status is <code>"[%f/%t] "</code> (note the trailing space
+to separate from the build rule). Another example of possible progress status
+could be <code>"[%u/%r/%f] "</code>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_extra_tools">Extra tools</h3>
+<div class="paragraph"><p>The <code>-t</code> flag on the Ninja command line runs some tools that we have
+found useful during Ninja&#8217;s development.  The current tools are:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>query</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
 dump the inputs and outputs of a given target.
 </p>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">browse</code>
-</p>
-</td><td valign="top">
-<p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>browse</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
 browse the dependency graph in a web browser.  Clicking a
 file focuses the view on that file, showing inputs and outputs.  This
 feature requires a Python installation. By default port 8000 is used
 and a web browser will be opened. This can be changed as follows:
 </p>
-<pre class="screen">ninja -t browse --port=8000 --no-browser mytarget</pre>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">graph</code>
-</p>
-</td><td valign="top">
-<p>
-output a file in the syntax used by <code class="literal">graphviz</code>, a automatic
+<div class="listingblock">
+<div class="content">
+<pre><code>ninja -t browse --port=8000 --no-browser mytarget</code></pre>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>graph</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+output a file in the syntax used by <code>graphviz</code>, a automatic
 graph layout tool.  Use it like:
 </p>
-<pre class="screen">ninja -t graph mytarget | dot -Tpng -ograph.png</pre>
-<p>In the Ninja source tree, <code class="literal">ninja graph.png</code>
+<div class="listingblock">
+<div class="content">
+<pre><code>ninja -t graph mytarget | dot -Tpng -ograph.png</code></pre>
+</div></div>
+<div class="paragraph"><p>In the Ninja source tree, <code>ninja graph.png</code>
 generates an image for Ninja itself.  If no target is given generate a
-graph for all root targets.</p>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">targets</code>
-</p>
-</td><td valign="top">
-<p>
+graph for all root targets.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>targets</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
 output a list of targets either by rule or by depth.  If used
-like <code class="literal">ninja -t targets rule <span class="emphasis"><em>name</em></span></code> it prints the list of targets
+like <code>ninja -t targets rule <em>name</em></code> it prints the list of targets
 using the given rule to be built.  If no rule is given, it prints the source
 files (the leaves of the graph).  If used like
-<code class="literal">ninja -t targets depth <span class="emphasis"><em>digit</em></span></code> it
+<code>ninja -t targets depth <em>digit</em></code> it
 prints the list of targets in a depth-first manner starting by the root
 targets (the ones with no outputs). Indentation is used to mark dependencies.
 If the depth is zero it prints all targets. If no arguments are provided
-<code class="literal">ninja -t targets depth 1</code> is assumed. In this mode targets may be listed
-several times. If used like this <code class="literal">ninja -t targets all</code> it
+<code>ninja -t targets depth 1</code> is assumed. In this mode targets may be listed
+several times. If used like this <code>ninja -t targets all</code> it
 prints all the targets available without indentation and it is faster
-than the <span class="emphasis"><em>depth</em></span> mode.
+than the <em>depth</em> mode.
 </p>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">commands</code>
-</p>
-</td><td valign="top">
-<p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>commands</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
 given a list of targets, print a list of commands which, if
 executed in order, may be used to rebuild those targets, assuming that all
 output files are out of date.
 </p>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">clean</code>
-</p>
-</td><td valign="top">
-<p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>clean</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
 remove built files. By default it removes all built files
-except for those created by the generator.  Adding the <code class="literal">-g</code> flag also
-removes built files created by the generator (see <a class="link" href="https://ninja-build.org/manual.html#ref_rule" title="Rule variables">the rule reference for the <code class="literal">generator</code> attribute</a>).  Additional arguments are
+except for those created by the generator.  Adding the <code>-g</code> flag also
+removes built files created by the generator (see <a href="#ref_rule">the rule reference for the <code>generator</code> attribute</a>).  Additional arguments are
 targets, which removes the given targets and recursively all files
 built for them.
 </p>
-<p>If used like <code class="literal">ninja -t clean -r <span class="emphasis"><em>rules</em></span></code> it removes all files built using
-the given rules.</p>
-<p>Files created but not referenced in the graph are not removed. This
-tool takes in account the <code class="literal">-v</code> and the <code class="literal">-n</code> options (note that <code class="literal">-n</code>
-implies <code class="literal">-v</code>).</p>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">compdb</code>
-</p>
-</td><td valign="top">
-<p>
+<div class="paragraph"><p>If used like <code>ninja -t clean -r <em>rules</em></code> it removes all files built using
+the given rules.</p></div>
+<div class="paragraph"><p>Files created but not referenced in the graph are not removed. This
+tool takes in account the <code>-v</code> and the <code>-n</code> options (note that <code>-n</code>
+implies <code>-v</code>).</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>compdb</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
 given a list of rules, each of which is expected to be a
 C family language compiler rule whose first input is the name of the
 source file, prints on standard output a compilation database in the
-<a class="ulink" href="http://clang.llvm.org/docs/JSONCompilationDatabase.html" target="_top">JSON format</a> expected
+<a href="http://clang.llvm.org/docs/JSONCompilationDatabase.html">JSON format</a> expected
 by the Clang tooling interface.
-<span class="emphasis"><em>Available since Ninja 1.2.</em></span>
+<em>Available since Ninja 1.2.</em>
 </p>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">deps</code>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>deps</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+show all dependencies stored in the <code>.ninja_deps</code> file. When given a
+target, show just the target&#8217;s dependencies. <em>Available since Ninja 1.4.</em>
 </p>
-</td><td valign="top">
-<p>
-show all dependencies stored in the <code class="literal">.ninja_deps</code> file. When given a
-target, show just the target’s dependencies. <span class="emphasis"><em>Available since Ninja 1.4.</em></span>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>recompact</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+recompact the <code>.ninja_deps</code> file. <em>Available since Ninja 1.4.</em>
 </p>
-</td></tr><tr><td valign="top">
-<p>
-<code class="literal">recompact</code>
-</p>
-</td><td valign="top">
-<p>
-recompact the <code class="literal">.ninja_deps</code> file. <span class="emphasis"><em>Available since Ninja 1.4.</em></span>
-</p>
-</td></tr></tbody></table></div></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_writing_your_own_ninja_files"></a>Writing your own Ninja files</h1></div></div></div><p>The remainder of this manual is only useful if you are constructing
-Ninja files yourself: for example, if you’re writing a meta-build
-system or supporting a new language.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_conceptual_overview"></a>Conceptual overview</h2></div></div></div><p>Ninja evaluates a graph of dependencies between files, and runs
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_writing_your_own_ninja_files">Writing your own Ninja files</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The remainder of this manual is only useful if you are constructing
+Ninja files yourself: for example, if you&#8217;re writing a meta-build
+system or supporting a new language.</p></div>
+<div class="sect2">
+<h3 id="_conceptual_overview">Conceptual overview</h3>
+<div class="paragraph"><p>Ninja evaluates a graph of dependencies between files, and runs
 whichever commands are necessary to make your build target up to date
 as determined by file modification times.  If you are familiar with
-Make, Ninja is very similar.</p><p>A build file (default name: <code class="literal">build.ninja</code>) provides a list of <span class="emphasis"><em>rules</em></span> — short names for longer commands, like how to run the compiler — along with a list of <span class="emphasis"><em>build</em></span> statements saying how to build files
-using the rules — which rule to apply to which inputs to produce
-which outputs.</p><p>Conceptually, <code class="literal">build</code> statements describe the dependency graph of your
-project, while <code class="literal">rule</code> statements describe how to generate the files
-along a given edge of the graph.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_syntax_example"></a>Syntax example</h2></div></div></div><p>Here’s a basic <code class="literal">.ninja</code> file that demonstrates most of the syntax.
-It will be used as an example for the following sections.</p><pre class="screen">cflags = -Wall
+Make, Ninja is very similar.</p></div>
+<div class="paragraph"><p>A build file (default name: <code>build.ninja</code>) provides a list of <em>rules</em>&#8201;&#8212;&#8201;short names for longer commands, like how to run the compiler&#8201;&#8212;&#8201;along with a list of <em>build</em> statements saying how to build files
+using the rules&#8201;&#8212;&#8201;which rule to apply to which inputs to produce
+which outputs.</p></div>
+<div class="paragraph"><p>Conceptually, <code>build</code> statements describe the dependency graph of your
+project, while <code>rule</code> statements describe how to generate the files
+along a given edge of the graph.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_syntax_example">Syntax example</h3>
+<div class="paragraph"><p>Here&#8217;s a basic <code>.ninja</code> file that demonstrates most of the syntax.
+It will be used as an example for the following sections.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cflags = -Wall
 
 rule cc
   command = gcc $cflags -c $in -o $out
 
-build foo.o: cc foo.c</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_variables"></a>Variables</h2></div></div></div><p>Despite the non-goal of being convenient to write by hand, to keep
+build foo.o: cc foo.c</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_variables">Variables</h3>
+<div class="paragraph"><p>Despite the non-goal of being convenient to write by hand, to keep
 build files readable (debuggable), Ninja supports declaring shorter
-reusable names for strings.  A declaration like the following</p><pre class="screen">cflags = -g</pre><p>can be used on the right side of an equals sign, dereferencing it with
-a dollar sign, like this:</p><pre class="screen">rule cc
-  command = gcc $cflags -c $in -o $out</pre><p>Variables can also be referenced using curly braces like <code class="literal">${in}</code>.</p><p>Variables might better be called "bindings", in that a given variable
+reusable names for strings.  A declaration like the following</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cflags = -g</code></pre>
+</div></div>
+<div class="paragraph"><p>can be used on the right side of an equals sign, dereferencing it with
+a dollar sign, like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>rule cc
+  command = gcc $cflags -c $in -o $out</code></pre>
+</div></div>
+<div class="paragraph"><p>Variables can also be referenced using curly braces like <code>${in}</code>.</p></div>
+<div class="paragraph"><p>Variables might better be called "bindings", in that a given variable
 cannot be changed, only shadowed.  There is more on how shadowing works
-later in this document.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_rules"></a>Rules</h2></div></div></div><p>Rules declare a short name for a command line.  They begin with a line
-consisting of the <code class="literal">rule</code> keyword and a name for the rule.  Then
-follows an indented set of <code class="literal">variable = value</code> lines.</p><p>The basic example above declares a new rule named <code class="literal">cc</code>, along with the
-command to run.  In the context of a rule, the <code class="literal">command</code> variable
-defines the command to run, <code class="literal">$in</code> expands to the list of
-input files (<code class="literal">foo.c</code>), and <code class="literal">$out</code> to the output files (<code class="literal">foo.o</code>) for the
+later in this document.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_rules">Rules</h3>
+<div class="paragraph"><p>Rules declare a short name for a command line.  They begin with a line
+consisting of the <code>rule</code> keyword and a name for the rule.  Then
+follows an indented set of <code>variable = value</code> lines.</p></div>
+<div class="paragraph"><p>The basic example above declares a new rule named <code>cc</code>, along with the
+command to run.  In the context of a rule, the <code>command</code> variable
+defines the command to run, <code>$in</code> expands to the list of
+input files (<code>foo.c</code>), and <code>$out</code> to the output files (<code>foo.o</code>) for the
 command.  A full list of special variables is provided in
-<a class="link" href="https://ninja-build.org/manual.html#ref_rule" title="Rule variables">the reference</a>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_build_statements"></a>Build statements</h2></div></div></div><p>Build statements declare a relationship between input and output
-files.  They begin with the <code class="literal">build</code> keyword, and have the format
-<code class="literal">build <span class="emphasis"><em>outputs</em></span>: <span class="emphasis"><em>rulename</em></span> <span class="emphasis"><em>inputs</em></span></code>.  Such a declaration says that
+<a href="#ref_rule">the reference</a>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_build_statements">Build statements</h3>
+<div class="paragraph"><p>Build statements declare a relationship between input and output
+files.  They begin with the <code>build</code> keyword, and have the format
+<code>build <em>outputs</em>: <em>rulename</em> <em>inputs</em></code>.  Such a declaration says that
 all of the output files are derived from the input files.  When the
 output files are missing or when the inputs change, Ninja will run the
-rule to regenerate the outputs.</p><p>The basic example above describes how to build <code class="literal">foo.o</code>, using the <code class="literal">cc</code>
-rule.</p><p>In the scope of a <code class="literal">build</code> block (including in the evaluation of its
-associated <code class="literal">rule</code>), the variable <code class="literal">$in</code> is the list of inputs and the
-variable <code class="literal">$out</code> is the list of outputs.</p><p>A build statement may be followed by an indented set of <code class="literal">key = value</code>
+rule to regenerate the outputs.</p></div>
+<div class="paragraph"><p>The basic example above describes how to build <code>foo.o</code>, using the <code>cc</code>
+rule.</p></div>
+<div class="paragraph"><p>In the scope of a <code>build</code> block (including in the evaluation of its
+associated <code>rule</code>), the variable <code>$in</code> is the list of inputs and the
+variable <code>$out</code> is the list of outputs.</p></div>
+<div class="paragraph"><p>A build statement may be followed by an indented set of <code>key = value</code>
 pairs, much like a rule.  These variables will shadow any variables
-when evaluating the variables in the command.  For example:</p><pre class="screen">cflags = -Wall -Werror
+when evaluating the variables in the command.  For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cflags = -Wall -Werror
 rule cc
   command = gcc $cflags -c $in -o $out
 
@@ -366,110 +1314,207 @@ build special.o: cc special.c
 
 # The variable was only shadowed for the scope of special.o;
 # Subsequent build lines get the outer (original) cflags.
-build bar.o: cc bar.c</pre><p>For more discussion of how scoping works, consult <a class="link" href="https://ninja-build.org/manual.html#ref_scope" title="Evaluation and scoping">the reference</a>.</p><p>If you need more complicated information passed from the build
+build bar.o: cc bar.c</code></pre>
+</div></div>
+<div class="paragraph"><p>For more discussion of how scoping works, consult <a href="#ref_scope">the reference</a>.</p></div>
+<div class="paragraph"><p>If you need more complicated information passed from the build
 statement to the rule (for example, if the rule needs "the file
 extension of the first input"), pass that through as an extra
-variable, like how <code class="literal">cflags</code> is passed above.</p><p>If the top-level Ninja file is specified as an output of any build
+variable, like how <code>cflags</code> is passed above.</p></div>
+<div class="paragraph"><p>If the top-level Ninja file is specified as an output of any build
 statement and it is out of date, Ninja will rebuild and reload it
-before building the targets requested by the user.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_generating_ninja_files_from_code"></a>Generating Ninja files from code</h2></div></div></div><p><code class="literal">misc/ninja_syntax.py</code> in the Ninja distribution is a tiny Python
+before building the targets requested by the user.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_generating_ninja_files_from_code">Generating Ninja files from code</h3>
+<div class="paragraph"><p><code>misc/ninja_syntax.py</code> in the Ninja distribution is a tiny Python
 module to facilitate generating Ninja files.  It allows you to make
-Python calls like <code class="literal">ninja.rule(name='foo', command='bar',
+Python calls like <code>ninja.rule(name='foo', command='bar',
 depfile='$out.d')</code> and it will generate the appropriate syntax.  Feel
-free to just inline it into your project’s build system if it’s
-useful.</p></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_more_details"></a>More details</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_the_literal_phony_literal_rule"></a>The <code class="literal">phony</code> rule</h2></div></div></div><p>The special rule name <code class="literal">phony</code> can be used to create aliases for other
-targets.  For example:</p><pre class="screen">build foo: phony some/file/in/a/faraway/subdir/foo</pre><p>This makes <code class="literal">ninja foo</code> build the longer path.  Semantically, the
-<code class="literal">phony</code> rule is equivalent to a plain rule where the <code class="literal">command</code> does
-nothing, but phony rules are handled specially in that they aren’t
+free to just inline it into your project&#8217;s build system if it&#8217;s
+useful.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_more_details">More details</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_the_code_phony_code_rule">The <code>phony</code> rule</h3>
+<div class="paragraph"><p>The special rule name <code>phony</code> can be used to create aliases for other
+targets.  For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>build foo: phony some/file/in/a/faraway/subdir/foo</code></pre>
+</div></div>
+<div class="paragraph"><p>This makes <code>ninja foo</code> build the longer path.  Semantically, the
+<code>phony</code> rule is equivalent to a plain rule where the <code>command</code> does
+nothing, but phony rules are handled specially in that they aren&#8217;t
 printed when run, logged (see below), nor do they contribute to the
-command count printed as part of the build process.</p><p><code class="literal">phony</code> can also be used to create dummy targets for files which
+command count printed as part of the build process.</p></div>
+<div class="paragraph"><p><code>phony</code> can also be used to create dummy targets for files which
 may not exist at build time.  If a phony build statement is written
 without any dependencies, the target will be considered out of date if
 it does not exist.  Without a phony build statement, Ninja will report
-an error if the file does not exist and is required by the build.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_default_target_statements"></a>Default target statements</h2></div></div></div><p>By default, if no targets are specified on the command line, Ninja
+an error if the file does not exist and is required by the build.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_default_target_statements">Default target statements</h3>
+<div class="paragraph"><p>By default, if no targets are specified on the command line, Ninja
 will build every output that is not named as an input elsewhere.
 You can override this behavior using a default target statement.
 A default target statement causes Ninja to build only a given subset
-of output files if none are specified on the command line.</p><p>Default target statements begin with the <code class="literal">default</code> keyword, and have
-the format <code class="literal">default <span class="emphasis"><em>targets</em></span></code>.  A default target statement must appear
+of output files if none are specified on the command line.</p></div>
+<div class="paragraph"><p>Default target statements begin with the <code>default</code> keyword, and have
+the format <code>default <em>targets</em></code>.  A default target statement must appear
 after the build statement that declares the target as an output file.
 They are cumulative, so multiple statements may be used to extend
-the list of default targets.  For example:</p><pre class="screen">default foo bar
-default baz</pre><p>This causes Ninja to build the <code class="literal">foo</code>, <code class="literal">bar</code> and <code class="literal">baz</code> targets by
-default.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_log"></a>The Ninja log</h2></div></div></div><p>For each built file, Ninja keeps a log of the command used to build
+the list of default targets.  For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>default foo bar
+default baz</code></pre>
+</div></div>
+<div class="paragraph"><p>This causes Ninja to build the <code>foo</code>, <code>bar</code> and <code>baz</code> targets by
+default.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ref_log">The Ninja log</h3>
+<div class="paragraph"><p>For each built file, Ninja keeps a log of the command used to build
 it.  Using this log Ninja can know when an existing output was built
 with a different command line than the build files specify (i.e., the
-command line changed) and knows to rebuild the file.</p><p>The log file is kept in the build root in a file called <code class="literal">.ninja_log</code>.
-If you provide a variable named <code class="literal">builddir</code> in the outermost scope,
-<code class="literal">.ninja_log</code> will be kept in that directory instead.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_versioning"></a>Version compatibility</h2></div></div></div><p><span class="emphasis"><em>Available since Ninja 1.2.</em></span></p><p>Ninja version labels follow the standard major.minor.patch format,
+command line changed) and knows to rebuild the file.</p></div>
+<div class="paragraph"><p>The log file is kept in the build root in a file called <code>.ninja_log</code>.
+If you provide a variable named <code>builddir</code> in the outermost scope,
+<code>.ninja_log</code> will be kept in that directory instead.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ref_versioning">Version compatibility</h3>
+<div class="paragraph"><p><em>Available since Ninja 1.2.</em></p></div>
+<div class="paragraph"><p>Ninja version labels follow the standard major.minor.patch format,
 where the major version is increased on backwards-incompatible
 syntax/behavioral changes and the minor version is increased on new
-behaviors.  Your <code class="literal">build.ninja</code> may declare a variable named
-<code class="literal">ninja_required_version</code> that asserts the minimum Ninja version
-required to use the generated file.  For example,</p><pre class="screen">ninja_required_version = 1.1</pre><p>declares that the build file relies on some feature that was
-introduced in Ninja 1.1 (perhaps the <code class="literal">pool</code> syntax), and that
+behaviors.  Your <code>build.ninja</code> may declare a variable named
+<code>ninja_required_version</code> that asserts the minimum Ninja version
+required to use the generated file.  For example,</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>ninja_required_version = 1.1</code></pre>
+</div></div>
+<div class="paragraph"><p>declares that the build file relies on some feature that was
+introduced in Ninja 1.1 (perhaps the <code>pool</code> syntax), and that
 Ninja 1.1 or greater must be used to build.  Unlike other Ninja
 variables, this version requirement is checked immediately when
-the variable is encountered in parsing, so it’s best to put it
-at the top of the build file.</p><p>Ninja always warns if the major versions of Ninja and the
-<code class="literal">ninja_required_version</code> don’t match; a major version change hasn’t
-come up yet so it’s difficult to predict what behavior might be
-required.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_headers"></a>C/C++ header dependencies</h2></div></div></div><p>To get C/C++ header dependencies (or any other build dependency that
-works in a similar way) correct Ninja has some extra functionality.</p><p>The problem with headers is that the full list of files that a given
+the variable is encountered in parsing, so it&#8217;s best to put it
+at the top of the build file.</p></div>
+<div class="paragraph"><p>Ninja always warns if the major versions of Ninja and the
+<code>ninja_required_version</code> don&#8217;t match; a major version change hasn&#8217;t
+come up yet so it&#8217;s difficult to predict what behavior might be
+required.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ref_headers">C/C++ header dependencies</h3>
+<div class="paragraph"><p>To get C/C++ header dependencies (or any other build dependency that
+works in a similar way) correct Ninja has some extra functionality.</p></div>
+<div class="paragraph"><p>The problem with headers is that the full list of files that a given
 source file depends on can only be discovered by the compiler:
 different preprocessor defines and include paths cause different files
 to be used.  Some compilers can emit this information while building,
-and Ninja can use that to get its dependencies perfect.</p><p>Consider: if the file has never been compiled, it must be built anyway,
+and Ninja can use that to get its dependencies perfect.</p></div>
+<div class="paragraph"><p>Consider: if the file has never been compiled, it must be built anyway,
 generating the header dependencies as a side effect.  If any file is
 later modified (even in a way that changes which headers it depends
 on) the modification will cause a rebuild as well, keeping the
-dependencies up to date.</p><p>When loading these special dependencies, Ninja implicitly adds extra
+dependencies up to date.</p></div>
+<div class="paragraph"><p>When loading these special dependencies, Ninja implicitly adds extra
 build edges such that it is not an error if the listed dependency is
 missing.  This allows you to delete a header file and rebuild without
-the build aborting due to a missing input.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_depfile"></a>depfile</h3></div></div></div><p><code class="literal">gcc</code> (and other compilers like <code class="literal">clang</code>) support emitting dependency
+the build aborting due to a missing input.</p></div>
+<div class="sect3">
+<h4 id="_depfile">depfile</h4>
+<div class="paragraph"><p><code>gcc</code> (and other compilers like <code>clang</code>) support emitting dependency
 information in the syntax of a Makefile.  (Any command that can write
-dependencies in this form can be used, not just <code class="literal">gcc</code>.)</p><p>To bring this information into Ninja requires cooperation.  On the
-Ninja side, the <code class="literal">depfile</code> attribute on the <code class="literal">build</code> must point to a
+dependencies in this form can be used, not just <code>gcc</code>.)</p></div>
+<div class="paragraph"><p>To bring this information into Ninja requires cooperation.  On the
+Ninja side, the <code>depfile</code> attribute on the <code>build</code> must point to a
 path where this data is written.  (Ninja only supports the limited
 subset of the Makefile syntax emitted by compilers.)  Then the command
-must know to write dependencies into the <code class="literal">depfile</code> path.
-Use it like in the following example:</p><pre class="screen">rule cc
+must know to write dependencies into the <code>depfile</code> path.
+Use it like in the following example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>rule cc
   depfile = $out.d
-  command = gcc -MMD -MF $out.d [other gcc flags here]</pre><p>The <code class="literal">-MMD</code> flag to <code class="literal">gcc</code> tells it to output header dependencies, and
-the <code class="literal">-MF</code> flag tells it where to write them.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_deps"></a>deps</h3></div></div></div><p><span class="emphasis"><em>(Available since Ninja 1.3.)</em></span></p><p>It turns out that for large projects (and particularly on Windows,
+  command = gcc -MMD -MF $out.d [other gcc flags here]</code></pre>
+</div></div>
+<div class="paragraph"><p>The <code>-MMD</code> flag to <code>gcc</code> tells it to output header dependencies, and
+the <code>-MF</code> flag tells it where to write them.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_deps">deps</h4>
+<div class="paragraph"><p><em>(Available since Ninja 1.3.)</em></p></div>
+<div class="paragraph"><p>It turns out that for large projects (and particularly on Windows,
 where the file system is slow) loading these dependency files on
-startup is slow.</p><p>Ninja 1.3 can instead process dependencies just after they’re generated
+startup is slow.</p></div>
+<div class="paragraph"><p>Ninja 1.3 can instead process dependencies just after they&#8217;re generated
 and save a compacted form of the same information in a Ninja-internal
-database.</p><p>Ninja supports this processing in two forms.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
-<code class="literal">deps = gcc</code> specifies that the tool outputs <code class="literal">gcc</code>-style dependencies
+database.</p></div>
+<div class="paragraph"><p>Ninja supports this processing in two forms.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+<code>deps = gcc</code> specifies that the tool outputs <code>gcc</code>-style dependencies
    in the form of Makefiles.  Adding this to the above example will
-   cause Ninja to process the <code class="literal">depfile</code> immediately after the
-   compilation finishes, then delete the <code class="literal">.d</code> file (which is only used
+   cause Ninja to process the <code>depfile</code> immediately after the
+   compilation finishes, then delete the <code>.d</code> file (which is only used
    as a temporary).
-</li><li class="listitem"><p class="simpara">
-<code class="literal">deps = msvc</code> specifies that the tool outputs header dependencies
-   in the form produced by Visual Studio’s compiler’s
-   <a class="ulink" href="http://msdn.microsoft.com/en-us/library/hdkef6tk(v=vs.90).aspx" target="_top"><code class="literal">/showIncludes</code>
+</p>
+</li>
+<li>
+<p>
+<code>deps = msvc</code> specifies that the tool outputs header dependencies
+   in the form produced by Visual Studio&#8217;s compiler&#8217;s
+   <a href="http://msdn.microsoft.com/en-us/library/hdkef6tk(v=vs.90).aspx"><code>/showIncludes</code>
    flag</a>.  Briefly, this means the tool outputs specially-formatted lines
    to its stdout.  Ninja then filters these lines from the displayed
-   output.  No <code class="literal">depfile</code> attribute is necessary, but the localized string
+   output.  No <code>depfile</code> attribute is necessary, but the localized string
    in front of the the header file path. For instance
    `msvc_deps_prefix = Note: including file: `
    for a English Visual Studio (the default). Should be globally defined.
-</p><pre class="screen">msvc_deps_prefix = Note: including file:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>msvc_deps_prefix = Note: including file:
 rule cc
   deps = msvc
-  command = cl /showIncludes -c $in /Fo$out</pre></li></ol></div><p>If the include directory directives are using absolute paths, your depfile
+  command = cl /showIncludes -c $in /Fo$out</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>If the include directory directives are using absolute paths, your depfile
 may result in a mixture of relative and absolute paths. Paths used by other
 build rules need to match exactly. Therefore, it is recommended to use
-relative paths in these cases.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_pool"></a>Pools</h2></div></div></div><p><span class="emphasis"><em>Available since Ninja 1.1.</em></span></p><p>Pools allow you to allocate one or more rules or edges a finite number
+relative paths in these cases.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_pool">Pools</h3>
+<div class="paragraph"><p><em>Available since Ninja 1.1.</em></p></div>
+<div class="paragraph"><p>Pools allow you to allocate one or more rules or edges a finite number
 of concurrent jobs which is more tightly restricted than the default
-parallelism.</p><p>This can be useful, for example, to restrict a particular expensive rule
+parallelism.</p></div>
+<div class="paragraph"><p>This can be useful, for example, to restrict a particular expensive rule
 (like link steps for huge executables), or to restrict particular build
-statements which you know perform poorly when run concurrently.</p><p>Each pool has a <code class="literal">depth</code> variable which is specified in the build file.
-The pool is then referred to with the <code class="literal">pool</code> variable on either a rule
-or a build statement.</p><p>No matter what pools you specify, ninja will never run more concurrent jobs
+statements which you know perform poorly when run concurrently.</p></div>
+<div class="paragraph"><p>Each pool has a <code>depth</code> variable which is specified in the build file.
+The pool is then referred to with the <code>pool</code> variable on either a rule
+or a build statement.</p></div>
+<div class="paragraph"><p>No matter what pools you specify, ninja will never run more concurrent jobs
 than the default parallelism, or the number of jobs specified on the command
-line (with <code class="literal">-j</code>).</p><pre class="screen"># No more than 4 links at a time.
+line (with <code>-j</code>).</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># No more than 4 links at a time.
 pool link_pool
   depth = 4
 
@@ -498,254 +1543,497 @@ build other.exe: link input.obj
 build heavy_object1.obj: cc heavy_obj1.cc
   pool = heavy_object_pool
 build heavy_object2.obj: cc heavy_obj2.cc
-  pool = heavy_object_pool</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_the_literal_console_literal_pool"></a>The <code class="literal">console</code> pool</h3></div></div></div><p><span class="emphasis"><em>Available since Ninja 1.5.</em></span></p><p>There exists a pre-defined pool named <code class="literal">console</code> with a depth of 1. It has
+  pool = heavy_object_pool</code></pre>
+</div></div>
+<div class="sect3">
+<h4 id="_the_code_console_code_pool">The <code>console</code> pool</h4>
+<div class="paragraph"><p><em>Available since Ninja 1.5.</em></p></div>
+<div class="paragraph"><p>There exists a pre-defined pool named <code>console</code> with a depth of 1. It has
 the special property that any task in the pool has direct access to the
 standard input, output and error streams provided to Ninja, which are
-normally connected to the user’s console (hence the name) but could be
+normally connected to the user&#8217;s console (hence the name) but could be
 redirected. This can be useful for interactive tasks or long-running tasks
-which produce status updates on the console (such as test suites).</p><p>While a task in the <code class="literal">console</code> pool is running, Ninja’s regular output (such
+which produce status updates on the console (such as test suites).</p></div>
+<div class="paragraph"><p>While a task in the <code>console</code> pool is running, Ninja&#8217;s regular output (such
 as progress status and output from concurrent tasks) is buffered until
-it completes.</p></div></div></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="_ninja_file_reference"></a>Ninja file reference</h1></div></div></div><p>A file is a series of declarations.  A declaration can be one of:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
-A rule declaration, which begins with <code class="literal">rule <span class="emphasis"><em>rulename</em></span></code>, and
+it completes.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ninja_file_reference">Ninja file reference</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>A file is a series of declarations.  A declaration can be one of:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+A rule declaration, which begins with <code>rule <em>rulename</em></code>, and
    then has a series of indented lines defining variables.
-</li><li class="listitem"><p class="simpara">
-A build edge, which looks like <code class="literal">build <span class="emphasis"><em>output1</em></span> <span class="emphasis"><em>output2</em></span>:
-   <span class="emphasis"><em>rulename</em></span> <span class="emphasis"><em>input1</em></span> <span class="emphasis"><em>input2</em></span></code>.
-   Implicit dependencies may be tacked on the end with <code class="literal">|
-   <span class="emphasis"><em>dependency1</em></span> <span class="emphasis"><em>dependency2</em></span></code>.
-   Order-only dependencies may be tacked on the end with <code class="literal">||
-   <span class="emphasis"><em>dependency1</em></span> <span class="emphasis"><em>dependency2</em></span></code>.  (See <a class="link" href="https://ninja-build.org/manual.html#ref_dependencies" title="Build dependencies">the reference on    dependency types</a>.)
-</p><p class="simpara">Implicit outputs <span class="emphasis"><em>(available since Ninja 1.7)</em></span> may be added before
-the <code class="literal">:</code> with <code class="literal">| <span class="emphasis"><em>output1</em></span> <span class="emphasis"><em>output2</em></span></code> and do not appear in <code class="literal">$out</code>.
-(See <a class="link" href="https://ninja-build.org/manual.html#ref_outputs" title="Build outputs">the reference on output types</a>.)</p></li><li class="listitem">
-Variable declarations, which look like <code class="literal"><span class="emphasis"><em>variable</em></span> = <span class="emphasis"><em>value</em></span></code>.
-</li><li class="listitem">
-Default target statements, which look like <code class="literal">default <span class="emphasis"><em>target1</em></span> <span class="emphasis"><em>target2</em></span></code>.
-</li><li class="listitem">
-References to more files, which look like <code class="literal">subninja <span class="emphasis"><em>path</em></span></code> or
-   <code class="literal">include <span class="emphasis"><em>path</em></span></code>.  The difference between these is explained below
-   <a class="link" href="https://ninja-build.org/manual.html#ref_scope" title="Evaluation and scoping">in the discussion about scoping</a>.
-</li><li class="listitem">
-A pool declaration, which looks like <code class="literal">pool <span class="emphasis"><em>poolname</em></span></code>. Pools are explained
-   <a class="link" href="https://ninja-build.org/manual.html#ref_pool" title="Pools">in the section on pools</a>.
-</li></ol></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_lexical_syntax"></a>Lexical syntax</h2></div></div></div><p>Ninja is mostly encoding agnostic, as long as the bytes Ninja cares
+</p>
+</li>
+<li>
+<p>
+A build edge, which looks like <code>build <em>output1</em> <em>output2</em>:
+   <em>rulename</em> <em>input1</em> <em>input2</em></code>.<br />
+   Implicit dependencies may be tacked on the end with <code>|
+   <em>dependency1</em> <em>dependency2</em></code>.<br />
+   Order-only dependencies may be tacked on the end with <code>||
+   <em>dependency1</em> <em>dependency2</em></code>.  (See <a href="#ref_dependencies">the reference on    dependency types</a>.)
+</p>
+<div class="paragraph"><p>Implicit outputs <em>(available since Ninja 1.7)</em> may be added before
+the <code>:</code> with <code>| <em>output1</em> <em>output2</em></code> and do not appear in <code>$out</code>.
+(See <a href="#ref_outputs">the reference on output types</a>.)</p></div>
+</li>
+<li>
+<p>
+Variable declarations, which look like <code><em>variable</em> = <em>value</em></code>.
+</p>
+</li>
+<li>
+<p>
+Default target statements, which look like <code>default <em>target1</em> <em>target2</em></code>.
+</p>
+</li>
+<li>
+<p>
+References to more files, which look like <code>subninja <em>path</em></code> or
+   <code>include <em>path</em></code>.  The difference between these is explained below
+   <a href="#ref_scope">in the discussion about scoping</a>.
+</p>
+</li>
+<li>
+<p>
+A pool declaration, which looks like <code>pool <em>poolname</em></code>. Pools are explained
+   <a href="#ref_pool">in the section on pools</a>.
+</p>
+</li>
+</ol></div>
+<div class="sect2">
+<h3 id="_lexical_syntax">Lexical syntax</h3>
+<div class="paragraph"><p>Ninja is mostly encoding agnostic, as long as the bytes Ninja cares
 about (like slashes in paths) are ASCII.  This means e.g. UTF-8 or
-ISO-8859-1 input files ought to work.</p><p>Comments begin with <code class="literal">#</code> and extend to the end of the line.</p><p>Newlines are significant.  Statements like <code class="literal">build foo bar</code> are a set
+ISO-8859-1 input files ought to work.</p></div>
+<div class="paragraph"><p>Comments begin with <code>#</code> and extend to the end of the line.</p></div>
+<div class="paragraph"><p>Newlines are significant.  Statements like <code>build foo bar</code> are a set
 of space-separated tokens that end at the newline.  Newlines and
-spaces within a token must be escaped.</p><p>There is only one escape character, <code class="literal">$</code>, and it has the following
-behaviors:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
-<code class="literal">$</code> followed by a newline
-</span></dt><dd>
+spaces within a token must be escaped.</p></div>
+<div class="paragraph"><p>There is only one escape character, <code>$</code>, and it has the following
+behaviors:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<code>$</code> followed by a newline
+</dt>
+<dd>
+<p>
 escape the newline (continue the current line
 across a line break).
-</dd><dt><span class="term">
-<code class="literal">$</code> followed by text
-</span></dt><dd>
+</p>
+</dd>
+<dt class="hdlist1">
+<code>$</code> followed by text
+</dt>
+<dd>
+<p>
 a variable reference.
-</dd><dt><span class="term">
-<code class="literal">${varname}</code>
-</span></dt><dd>
-alternate syntax for <code class="literal">$varname</code>.
-</dd><dt><span class="term">
-<code class="literal">$</code> followed by space
-</span></dt><dd>
+</p>
+</dd>
+<dt class="hdlist1">
+<code>${varname}</code>
+</dt>
+<dd>
+<p>
+alternate syntax for <code>$varname</code>.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>$</code> followed by space
+</dt>
+<dd>
+<p>
 a space.  (This is only necessary in lists of
 paths, where a space would otherwise separate filenames.  See below.)
-</dd><dt><span class="term">
-<code class="literal">$:</code> 
-</span></dt><dd>
-a colon.  (This is only necessary in <code class="literal">build</code> lines, where a colon
+</p>
+</dd>
+<dt class="hdlist1">
+<code>$:</code> 
+</dt>
+<dd>
+<p>
+a colon.  (This is only necessary in <code>build</code> lines, where a colon
 would otherwise terminate the list of outputs.)
-</dd><dt><span class="term">
-<code class="literal">$$</code>
-</span></dt><dd>
-a literal <code class="literal">$</code>.
-</dd></dl></div><p>A <code class="literal">build</code> or <code class="literal">default</code> statement is first parsed as a space-separated
+</p>
+</dd>
+<dt class="hdlist1">
+<code>$$</code>
+</dt>
+<dd>
+<p>
+a literal <code>$</code>.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>A <code>build</code> or <code>default</code> statement is first parsed as a space-separated
 list of filenames and then each name is expanded.  This means that
 spaces within a variable will result in spaces in the expanded
-filename.</p><pre class="screen">spaced = foo bar
+filename.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>spaced = foo bar
 build $spaced/baz other$ file: ...
-# The above build line has two outputs: "foo bar/baz" and "other file".</pre><p>In a <code class="literal">name = value</code> statement, whitespace at the beginning of a value
+# The above build line has two outputs: "foo bar/baz" and "other file".</code></pre>
+</div></div>
+<div class="paragraph"><p>In a <code>name = value</code> statement, whitespace at the beginning of a value
 is always stripped.  Whitespace at the beginning of a line after a
-line continuation is also stripped.</p><pre class="screen">two_words_with_one_space = foo $
+line continuation is also stripped.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>two_words_with_one_space = foo $
     bar
 one_word_with_no_space = foo$
-    bar</pre><p>Other whitespace is only significant if it’s at the beginning of a
-line.  If a line is indented more than the previous one, it’s
-considered part of its parent’s scope; if it is indented less than the
-previous one, it closes the previous scope.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_toplevel"></a>Top-level variables</h2></div></div></div><p>Two variables are significant when declared in the outermost file scope.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
-<code class="literal">builddir</code>
-</span></dt><dd>
-a directory for some Ninja output files.  See <a class="link" href="https://ninja-build.org/manual.html#ref_log" title="The Ninja log">the   discussion of the build log</a>.  (You can also store other build output
+    bar</code></pre>
+</div></div>
+<div class="paragraph"><p>Other whitespace is only significant if it&#8217;s at the beginning of a
+line.  If a line is indented more than the previous one, it&#8217;s
+considered part of its parent&#8217;s scope; if it is indented less than the
+previous one, it closes the previous scope.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ref_toplevel">Top-level variables</h3>
+<div class="paragraph"><p>Two variables are significant when declared in the outermost file scope.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<code>builddir</code>
+</dt>
+<dd>
+<p>
+a directory for some Ninja output files.  See <a href="#ref_log">the   discussion of the build log</a>.  (You can also store other build output
   in this directory.)
-</dd><dt><span class="term">
-<code class="literal">ninja_required_version</code>
-</span></dt><dd>
+</p>
+</dd>
+<dt class="hdlist1">
+<code>ninja_required_version</code>
+</dt>
+<dd>
+<p>
 the minimum version of Ninja required to process
-  the build correctly.  See <a class="link" href="https://ninja-build.org/manual.html#ref_versioning" title="Version compatibility">the discussion of versioning</a>.
-</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_rule"></a>Rule variables</h2></div></div></div><p>A <code class="literal">rule</code> block contains a list of <code class="literal">key = value</code> declarations that
+  the build correctly.  See <a href="#ref_versioning">the discussion of versioning</a>.
+</p>
+</dd>
+</dl></div>
+</div>
+<div class="sect2">
+<h3 id="ref_rule">Rule variables</h3>
+<div class="paragraph"><p>A <code>rule</code> block contains a list of <code>key = value</code> declarations that
 affect the processing of the rule.  Here is a full list of special
-keys.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
-<code class="literal">command</code> (<span class="emphasis"><em>required</em></span>)
-</span></dt><dd>
-the command line to run.  Each <code class="literal">rule</code> may
-  have only one <code class="literal">command</code> declaration. See <a class="link" href="https://ninja-build.org/manual.html#ref_rule_command" title="Interpretation of the command variable">the next   section</a> for more details on quoting and executing multiple commands.
-</dd><dt><span class="term">
-<code class="literal">depfile</code>
-</span></dt><dd>
-path to an optional <code class="literal">Makefile</code> that contains extra
-  <span class="emphasis"><em>implicit dependencies</em></span> (see <a class="link" href="https://ninja-build.org/manual.html#ref_dependencies" title="Build dependencies">the reference on   dependency types</a>).  This is explicitly to support C/C++ header
-  dependencies; see <a class="link" href="https://ninja-build.org/manual.html#ref_headers" title="C/C++ header dependencies">the full discussion</a>.
-</dd><dt><span class="term">
-<code class="literal">deps</code>
-</span></dt><dd>
-<span class="emphasis"><em>(Available since Ninja 1.3.)</em></span> if present, must be one of
-  <code class="literal">gcc</code> or <code class="literal">msvc</code> to specify special dependency processing.  See
-   <a class="link" href="https://ninja-build.org/manual.html#ref_headers" title="C/C++ header dependencies">the full discussion</a>.  The generated database is
-   stored as <code class="literal">.ninja_deps</code> in the <code class="literal">builddir</code>, see <a class="link" href="https://ninja-build.org/manual.html#ref_toplevel" title="Top-level variables">the    discussion of <code class="literal">builddir</code></a>.
-</dd><dt><span class="term">
-<code class="literal">msvc_deps_prefix</code>
-</span></dt><dd>
-<span class="emphasis"><em>(Available since Ninja 1.5.)</em></span> defines the string
-  which should be stripped from msvc’s /showIncludes output. Only
-  needed when <code class="literal">deps = msvc</code> and no English Visual Studio version is used.
-</dd><dt><span class="term">
-<code class="literal">description</code>
-</span></dt><dd>
+keys.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<code>command</code> (<em>required</em>)
+</dt>
+<dd>
+<p>
+the command line to run.  Each <code>rule</code> may
+  have only one <code>command</code> declaration. See <a href="#ref_rule_command">the next   section</a> for more details on quoting and executing multiple commands.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>depfile</code>
+</dt>
+<dd>
+<p>
+path to an optional <code>Makefile</code> that contains extra
+  <em>implicit dependencies</em> (see <a href="#ref_dependencies">the reference on   dependency types</a>).  This is explicitly to support C/C++ header
+  dependencies; see <a href="#ref_headers">the full discussion</a>.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>deps</code>
+</dt>
+<dd>
+<p>
+<em>(Available since Ninja 1.3.)</em> if present, must be one of
+  <code>gcc</code> or <code>msvc</code> to specify special dependency processing.  See
+   <a href="#ref_headers">the full discussion</a>.  The generated database is
+   stored as <code>.ninja_deps</code> in the <code>builddir</code>, see <a href="#ref_toplevel">the    discussion of <code>builddir</code></a>.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>msvc_deps_prefix</code>
+</dt>
+<dd>
+<p>
+<em>(Available since Ninja 1.5.)</em> defines the string
+  which should be stripped from msvc&#8217;s /showIncludes output. Only
+  needed when <code>deps = msvc</code> and no English Visual Studio version is used.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>description</code>
+</dt>
+<dd>
+<p>
 a short description of the command, used to pretty-print
-  the command as it’s running.  The <code class="literal">-v</code> flag controls whether to print
+  the command as it&#8217;s running.  The <code>-v</code> flag controls whether to print
   the full command or its description; if a command fails, the full command
-  line will always be printed before the command’s output.
-</dd><dt><span class="term">
-<code class="literal">generator</code>
-</span></dt><dd>
+  line will always be printed before the command&#8217;s output.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>generator</code>
+</dt>
+<dd>
+<p>
 if present, specifies that this rule is used to
-  re-invoke the generator program.  Files built using <code class="literal">generator</code>
+  re-invoke the generator program.  Files built using <code>generator</code>
   rules are treated specially in two ways: firstly, they will not be
   rebuilt if the command line changes; and secondly, they are not
   cleaned by default.
-</dd><dt><span class="term">
-<code class="literal">in</code>
-</span></dt><dd>
+</p>
+</dd>
+<dt class="hdlist1">
+<code>in</code>
+</dt>
+<dd>
+<p>
 the space-separated list of files provided as inputs to the build line
-  referencing this <code class="literal">rule</code>, shell-quoted if it appears in commands.  (<code class="literal">$in</code> is
+  referencing this <code>rule</code>, shell-quoted if it appears in commands.  (<code>$in</code> is
   provided solely for convenience; if you need some subset or variant of this
   list of files, just construct a new variable with that list and use
   that instead.)
-</dd><dt><span class="term">
-<code class="literal">in_newline</code>
-</span></dt><dd>
-the same as <code class="literal">$in</code> except that multiple inputs are
+</p>
+</dd>
+<dt class="hdlist1">
+<code>in_newline</code>
+</dt>
+<dd>
+<p>
+the same as <code>$in</code> except that multiple inputs are
   separated by newlines rather than spaces.  (For use with
-  <code class="literal">$rspfile_content</code>; this works around a bug in the MSVC linker where
+  <code>$rspfile_content</code>; this works around a bug in the MSVC linker where
   it uses a fixed-size buffer for processing input.)
-</dd><dt><span class="term">
-<code class="literal">out</code>
-</span></dt><dd>
+</p>
+</dd>
+<dt class="hdlist1">
+<code>out</code>
+</dt>
+<dd>
+<p>
 the space-separated list of files provided as outputs to the build line
-  referencing this <code class="literal">rule</code>, shell-quoted if it appears in commands.
-</dd><dt><span class="term">
-<code class="literal">restat</code>
-</span></dt><dd>
-if present, causes Ninja to re-stat the command’s outputs
+  referencing this <code>rule</code>, shell-quoted if it appears in commands.
+</p>
+</dd>
+<dt class="hdlist1">
+<code>restat</code>
+</dt>
+<dd>
+<p>
+if present, causes Ninja to re-stat the command&#8217;s outputs
   after execution of the command.  Each output whose modification time
   the command did not change will be treated as though it had never
-  needed to be built.  This may cause the output’s reverse
+  needed to be built.  This may cause the output&#8217;s reverse
   dependencies to be removed from the list of pending build actions.
-</dd><dt><span class="term">
-<code class="literal">rspfile</code>, <code class="literal">rspfile_content</code>
-</span></dt><dd><p class="simpara">
+</p>
+</dd>
+<dt class="hdlist1">
+<code>rspfile</code>, <code>rspfile_content</code>
+</dt>
+<dd>
+<p>
 if present (both), Ninja will use a
   response file for the given command, i.e. write the selected string
-  (<code class="literal">rspfile_content</code>) to the given file (<code class="literal">rspfile</code>) before calling the
+  (<code>rspfile_content</code>) to the given file (<code>rspfile</code>) before calling the
   command and delete the file after successful execution of the
   command.
-</p><p class="simpara">This is particularly useful on Windows OS, where the maximal length of
-a command line is limited and response files must be used instead.</p><p class="simpara">Use it like in the following example:</p><pre class="screen">rule link
+</p>
+<div class="paragraph"><p>This is particularly useful on Windows OS, where the maximal length of
+a command line is limited and response files must be used instead.</p></div>
+<div class="paragraph"><p>Use it like in the following example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>rule link
   command = link.exe /OUT$out [usual link flags here] @$out.rsp
   rspfile = $out.rsp
   rspfile_content = $in
 
-build myapp.exe: link a.obj b.obj [possibly many other .obj files]</pre></dd></dl></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="ref_rule_command"></a>Interpretation of the <code class="literal">command</code> variable</h3></div></div></div><p>Fundamentally, command lines behave differently on Unixes and Windows.</p><p>On Unixes, commands are arrays of arguments.  The Ninja <code class="literal">command</code>
-variable is passed directly to <code class="literal">sh -c</code>, which is then responsible for
+build myapp.exe: link a.obj b.obj [possibly many other .obj files]</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<code>log</code>
+</dt>
+<dd>
+<p>
+<em>(Available since Ninja 1.8.)</em> if present, Ninja will write a
+  logfile containing launched command line and its result.
+</p>
+</dd>
+</dl></div>
+<div class="sect3">
+<h4 id="ref_rule_command">Interpretation of the <code>command</code> variable</h4>
+<div class="paragraph"><p>Fundamentally, command lines behave differently on Unixes and Windows.</p></div>
+<div class="paragraph"><p>On Unixes, commands are arrays of arguments.  The Ninja <code>command</code>
+variable is passed directly to <code>sh -c</code>, which is then responsible for
 interpreting that string into an argv array.  Therefore the quoting
 rules are those of the shell, and you can use all the normal shell
-operators, like <code class="literal">&amp;&amp;</code> to chain multiple commands, or <code class="literal">VAR=value cmd</code> to
-set environment variables.</p><p>On Windows, commands are strings, so Ninja passes the <code class="literal">command</code> string
-directly to <code class="literal">CreateProcess</code>.  (In the common case of simply executing
+operators, like <code>&amp;&amp;</code> to chain multiple commands, or <code>VAR=value cmd</code> to
+set environment variables.</p></div>
+<div class="paragraph"><p>On Windows, commands are strings, so Ninja passes the <code>command</code> string
+directly to <code>CreateProcess</code>.  (In the common case of simply executing
 a compiler this means there is less overhead.)  Consequently the
 quoting rules are deterimined by the called program, which on Windows
 are usually provided by the C library.  If you need shell
-interpretation of the command (such as the use of <code class="literal">&amp;&amp;</code> to chain
+interpretation of the command (such as the use of <code>&amp;&amp;</code> to chain
 multiple commands), make the command execute the Windows shell by
-prefixing the command with <code class="literal">cmd /c</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_outputs"></a>Build outputs</h2></div></div></div><p>There are two types of build outputs which are subtly different.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p class="simpara">
-<span class="emphasis"><em>Explicit outputs</em></span>, as listed in a build line.  These are
-   available as the <code class="literal">$out</code> variable in the rule.
-</p><p class="simpara">This is the standard form of output to be used for e.g. the
-object file of a compile command.</p></li><li class="listitem"><p class="simpara">
-<span class="emphasis"><em>Implicit outputs</em></span>, as listed in a build line with the syntax <code class="literal">|
-   <span class="emphasis"><em>out1</em></span> <span class="emphasis"><em>out2</em></span></code> + before the <code class="literal">:</code> of a build line <span class="emphasis"><em>(available since
-   Ninja 1.7)</em></span>.  The semantics are identical to explicit outputs,
-  the only difference is that implicit outputs don’t show up in the
-  <code class="literal">$out</code> variable.
-</p><p class="simpara">This is for expressing outputs that don’t show up on the
-command line of the command.</p></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_dependencies"></a>Build dependencies</h2></div></div></div><p>There are three types of build dependencies which are subtly different.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p class="simpara">
-<span class="emphasis"><em>Explicit dependencies</em></span>, as listed in a build line.  These are
-   available as the <code class="literal">$in</code> variable in the rule.  Changes in these files
+prefixing the command with <code>cmd /c</code>.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ref_outputs">Build outputs</h3>
+<div class="paragraph"><p>There are two types of build outputs which are subtly different.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+<em>Explicit outputs</em>, as listed in a build line.  These are
+   available as the <code>$out</code> variable in the rule.
+</p>
+<div class="paragraph"><p>This is the standard form of output to be used for e.g. the
+object file of a compile command.</p></div>
+</li>
+<li>
+<p>
+<em>Implicit outputs</em>, as listed in a build line with the syntax <code>|
+   <em>out1</em> <em>out2</em></code> + before the <code>:</code> of a build line <em>(available since
+   Ninja 1.7)</em>.  The semantics are identical to explicit outputs,
+  the only difference is that implicit outputs don&#8217;t show up in the
+  <code>$out</code> variable.
+</p>
+<div class="paragraph"><p>This is for expressing outputs that don&#8217;t show up on the
+command line of the command.</p></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="ref_dependencies">Build dependencies</h3>
+<div class="paragraph"><p>There are three types of build dependencies which are subtly different.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+<em>Explicit dependencies</em>, as listed in a build line.  These are
+   available as the <code>$in</code> variable in the rule.  Changes in these files
    cause the output to be rebuilt; if these file are missing and
-   Ninja doesn’t know how to build them, the build is aborted.
-</p><p class="simpara">This is the standard form of dependency to be used e.g. for the
-source file of a compile command.</p></li><li class="listitem"><p class="simpara">
-<span class="emphasis"><em>Implicit dependencies</em></span>, either as picked up from
-   a <code class="literal">depfile</code> attribute on a rule or from the syntax <code class="literal">| <span class="emphasis"><em>dep1</em></span>
-   <span class="emphasis"><em>dep2</em></span></code> on the end of a build line.  The semantics are identical to
+   Ninja doesn&#8217;t know how to build them, the build is aborted.
+</p>
+<div class="paragraph"><p>This is the standard form of dependency to be used e.g. for the
+source file of a compile command.</p></div>
+</li>
+<li>
+<p>
+<em>Implicit dependencies</em>, either as picked up from
+   a <code>depfile</code> attribute on a rule or from the syntax <code>| <em>dep1</em>
+   <em>dep2</em></code> on the end of a build line.  The semantics are identical to
    explicit dependencies, the only difference is that implicit dependencies
-   don’t show up in the <code class="literal">$in</code> variable.
-</p><p class="simpara">This is for expressing dependencies that don’t show up on the
+   don&#8217;t show up in the <code>$in</code> variable.
+</p>
+<div class="paragraph"><p>This is for expressing dependencies that don&#8217;t show up on the
 command line of the command; for example, for a rule that runs a
 script, the script itself should be an implicit dependency, as
-changes to the script should cause the output to rebuild.</p><p class="simpara">Note that dependencies as loaded through depfiles have slightly different
-semantics, as described in the <a class="link" href="https://ninja-build.org/manual.html#ref_rule" title="Rule variables">rule reference</a>.</p></li><li class="listitem"><p class="simpara">
-<span class="emphasis"><em>Order-only dependencies</em></span>, expressed with the syntax <code class="literal">|| <span class="emphasis"><em>dep1</em></span>
-   <span class="emphasis"><em>dep2</em></span></code> on the end of a build line.  When these are out of date, the
+changes to the script should cause the output to rebuild.</p></div>
+<div class="paragraph"><p>Note that dependencies as loaded through depfiles have slightly different
+semantics, as described in the <a href="#ref_rule">rule reference</a>.</p></div>
+</li>
+<li>
+<p>
+<em>Order-only dependencies</em>, expressed with the syntax <code>|| <em>dep1</em>
+   <em>dep2</em></code> on the end of a build line.  When these are out of date, the
    output is not rebuilt until they are built, but changes in order-only
    dependencies alone do not cause the output to be rebuilt.
-</p><p class="simpara">Order-only dependencies can be useful for bootstrapping dependencies
+</p>
+<div class="paragraph"><p>Order-only dependencies can be useful for bootstrapping dependencies
 that are only discovered during build time: for example, to generate a
 header file before starting a subsequent compilation step.  (Once the
 header is used in compilation, a generated dependency file will then
-express the implicit dependency.)</p></li></ol></div><p>File paths are compared as is, which means that an absolute path and a
-relative path, pointing to the same file, are considered different by Ninja.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_variable_expansion"></a>Variable expansion</h2></div></div></div><p>Variables are expanded in paths (in a <code class="literal">build</code> or <code class="literal">default</code> statement)
-and on the right side of a <code class="literal">name = value</code> statement.</p><p>When a <code class="literal">name = value</code> statement is evaluated, its right-hand side is
+express the implicit dependency.)</p></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>File paths are compared as is, which means that an absolute path and a
+relative path, pointing to the same file, are considered different by Ninja.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_variable_expansion">Variable expansion</h3>
+<div class="paragraph"><p>Variables are expanded in paths (in a <code>build</code> or <code>default</code> statement)
+and on the right side of a <code>name = value</code> statement.</p></div>
+<div class="paragraph"><p>When a <code>name = value</code> statement is evaluated, its right-hand side is
 expanded immediately (according to the below scoping rules), and
-from then on <code class="literal">$name</code> expands to the static string as the result of the
-expansion.  It is never the case that you’ll need to "double-escape" a
-value to prevent it from getting expanded twice.</p><p>All variables are expanded immediately as they’re encountered in parsing,
-with one important exception: variables in <code class="literal">rule</code> blocks are expanded
-when the rule is <span class="emphasis"><em>used</em></span>, not when it is declared.  In the following
-example, the <code class="literal">demo</code> rule prints "this is a demo of bar".</p><pre class="screen">rule demo
+from then on <code>$name</code> expands to the static string as the result of the
+expansion.  It is never the case that you&#8217;ll need to "double-escape" a
+value to prevent it from getting expanded twice.</p></div>
+<div class="paragraph"><p>All variables are expanded immediately as they&#8217;re encountered in parsing,
+with one important exception: variables in <code>rule</code> blocks are expanded
+when the rule is <em>used</em>, not when it is declared.  In the following
+example, the <code>demo</code> rule prints "this is a demo of bar".</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>rule demo
   command = echo "this is a demo of $foo"
 
 build out: demo
-  foo = bar</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ref_scope"></a>Evaluation and scoping</h2></div></div></div><p>Top-level variable declarations are scoped to the file they occur in.</p><p>Rule declarations are also scoped to the file they occur in.
-<span class="emphasis"><em>(Available since Ninja 1.6)</em></span></p><p>The <code class="literal">subninja</code> keyword, used to include another <code class="literal">.ninja</code> file,
-introduces a new scope.  The included <code class="literal">subninja</code> file may use the
-variables and rules from the parent file, and shadow their values for the file’s
-scope, but it won’t affect values of the variables in the parent.</p><p>To include another <code class="literal">.ninja</code> file in the current scope, much like a C
-<code class="literal">#include</code> statement, use <code class="literal">include</code> instead of <code class="literal">subninja</code>.</p><p>Variable declarations indented in a <code class="literal">build</code> block are scoped to the
-<code class="literal">build</code> block.  The full lookup order for a variable expanded in a
-<code class="literal">build</code> block (or the <code class="literal">rule</code> is uses) is:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
-Special built-in variables (<code class="literal">$in</code>, <code class="literal">$out</code>).
-</li><li class="listitem">
-Build-level variables from the <code class="literal">build</code> block.
-</li><li class="listitem">
-Rule-level variables from the <code class="literal">rule</code> block (i.e. <code class="literal">$command</code>).
+  foo = bar</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="ref_scope">Evaluation and scoping</h3>
+<div class="paragraph"><p>Top-level variable declarations are scoped to the file they occur in.</p></div>
+<div class="paragraph"><p>Rule declarations are also scoped to the file they occur in.
+<em>(Available since Ninja 1.6)</em></p></div>
+<div class="paragraph"><p>The <code>subninja</code> keyword, used to include another <code>.ninja</code> file,
+introduces a new scope.  The included <code>subninja</code> file may use the
+variables and rules from the parent file, and shadow their values for the file&#8217;s
+scope, but it won&#8217;t affect values of the variables in the parent.</p></div>
+<div class="paragraph"><p>To include another <code>.ninja</code> file in the current scope, much like a C
+<code>#include</code> statement, use <code>include</code> instead of <code>subninja</code>.</p></div>
+<div class="paragraph"><p>Variable declarations indented in a <code>build</code> block are scoped to the
+<code>build</code> block.  The full lookup order for a variable expanded in a
+<code>build</code> block (or the <code>rule</code> is uses) is:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Special built-in variables (<code>$in</code>, <code>$out</code>).
+</p>
+</li>
+<li>
+<p>
+Build-level variables from the <code>build</code> block.
+</p>
+</li>
+<li>
+<p>
+Rule-level variables from the <code>rule</code> block (i.e. <code>$command</code>).
    (Note from the above discussion on expansion that these are
-   expanded "late", and may make use of in-scope bindings like <code class="literal">$in</code>.)
-</li><li class="listitem">
-File-level variables from the file that the <code class="literal">build</code> line was in.
-</li><li class="listitem">
+   expanded "late", and may make use of in-scope bindings like <code>$in</code>.)
+</p>
+</li>
+<li>
+<p>
+File-level variables from the file that the <code>build</code> line was in.
+</p>
+</li>
+<li>
+<p>
 Variables from the file that included that file using the
-   <code class="literal">subninja</code> keyword.
-</li></ol></div></div></div></div>
-</body></html>
+   <code>subninja</code> keyword.
+</p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2018-03-04 00:10:18 CET
+</div>
+</div>
+</body>
+</html>

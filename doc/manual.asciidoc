@@ -862,6 +862,9 @@ rule link
 build myapp.exe: link a.obj b.obj [possibly many other .obj files]
 ----
 
+`log`:: _(Available since Ninja 1.8.)_ if present, Ninja will write a
+  logfile containing launched command line and its result.
+
 [[ref_rule_command]]
 Interpretation of the `command` variable
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

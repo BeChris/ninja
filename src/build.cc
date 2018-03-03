@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "build.h"
+#include "disk_interface.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -108,11 +109,11 @@ void BuildStatus::BuildEdgeStarted(Edge* edge) {
     printer_.SetConsoleLocked(true);
 }
 
-void BuildStatus::BuildEdgeFinished(Edge* edge,
+bool BuildStatus::BuildEdgeFinished(Edge* edge,
                                     bool success,
                                     const string& output,
                                     int* start_time,
-                                    int* end_time) {
+                                    int* end_time, string *err) {
   int64_t now = GetTimeMillis();
 
   ++finished_edges_;
@@ -126,7 +127,7 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
     printer_.SetConsoleLocked(false);
 
   if (config_.verbosity == BuildConfig::QUIET)
-    return;
+    return true;
 
   if (!edge->use_console())
     PrintStatus(edge, kEdgeFinished);
@@ -172,6 +173,19 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
     _setmode(_fileno(stdout), _O_TEXT);  // End Windows extra CR fix
 #endif
   }
+
+  string log_file = edge->GetUnescapedLogfile();
+
+  if (!log_file.empty()) {
+    RealDiskInterface writer;
+    if (!(writer.MakeDirs(log_file) && writer.WriteFile(log_file, edge->EvaluateCommand() + "\n\n" + output))) {
+      err->assign("Could not create " + log_file + " log file");
+      return false;
+    }
+  }
+
+  return true;
+
 }
 
 void BuildStatus::BuildStarted() {
@@ -768,8 +782,11 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
   }
 
   int start_time, end_time;
-  status_->BuildEdgeFinished(edge, result->success(), result->output,
-                             &start_time, &end_time);
+  if (!status_->BuildEdgeFinished(edge, result->success(), result->output,
+                                  &start_time, &end_time, err)) {
+    plan_.EdgeFinished(edge, Plan::kEdgeFailed);
+    return false;
+  }
 
   // The rest of this function only applies to successful commands.
   if (!result->success()) {

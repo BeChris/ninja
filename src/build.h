@@ -199,8 +199,8 @@ struct BuildStatus {
   explicit BuildStatus(const BuildConfig& config);
   void PlanHasTotalEdges(int total);
   void BuildEdgeStarted(Edge* edge);
-  void BuildEdgeFinished(Edge* edge, bool success, const string& output,
-                         int* start_time, int* end_time);
+  bool BuildEdgeFinished(Edge* edge, bool success, const string& output,
+                         int* start_time, int* end_time, string* err);
   void BuildStarted();
   void BuildFinished();
 

@@ -68,6 +68,7 @@ bool Rule::IsReservedBinding(const string& var) {
       var == "description" ||
       var == "deps" ||
       var == "generator" ||
+      var == "log" ||
       var == "pool" ||
       var == "restat" ||
       var == "rspfile" ||

@@ -154,6 +154,8 @@ struct Edge {
   string GetUnescapedDepfile();
   /// Like GetBinding("rspfile"), but without shell escaping.
   string GetUnescapedRspfile();
+  /// Like GetBinding("log"), but without shell escaping.
+  string GetUnescapedLogfile();
 
   void Dump(const char* prefix="") const;
 
