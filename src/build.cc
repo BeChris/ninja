@@ -177,6 +177,7 @@ bool BuildStatus::BuildEdgeFinished(Edge* edge,
   string log_file = edge->GetUnescapedLogfile();
 
   if (!log_file.empty()) {
+    METRIC_RECORD("log file write");
     RealDiskInterface writer;
     if (!(writer.MakeDirs(log_file) && writer.WriteFile(log_file, edge->EvaluateCommand() + "\n\n" + output))) {
       err->assign("Could not create " + log_file + " log file");
